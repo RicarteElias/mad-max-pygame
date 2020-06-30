@@ -7,12 +7,13 @@ pygame.init()
 
 FPS = 60
 FramePerSec = pygame.time.Clock()
+FINALSCREEN = (220, 203, 181)
 RED   = (255, 0, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 SCREEN_WIDTH = 500
-SCREEN_HEIGHT = 600
-SPEED = 3
+SCREEN_HEIGHT = 600 
+SPEED = 1
 SCORE = 0
 
 font = pygame.font.SysFont("Verdana", 60)
@@ -128,7 +129,7 @@ def gameOver():
       DISPLAYSURF.blit(max.image, max.rect)
       pygame.display.update()
       time.sleep(2)     
-      DISPLAYSURF.fill(RED)
+      DISPLAYSURF.fill(FINALSCREEN)
       DISPLAYSURF.blit(game_over, (30,250))
       pygame.display.update()
       time.sleep(2)
@@ -138,8 +139,8 @@ def gameOver():
 
 while True:
     for event in pygame.event.get():
-        # if SCORE % 10 == 0:
-            #   SPEED += 1      
+        if SCORE % 10 == 0:
+              SPEED += 1     
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
