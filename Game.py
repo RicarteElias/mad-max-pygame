@@ -10,14 +10,14 @@ FramePerSec = pygame.time.Clock()
 RED   = (255, 0, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-SCREEN_WIDTH = 565
+SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 600
-SPEED = 5
+SPEED = 3
 SCORE = 0
 
 font = pygame.font.SysFont("Verdana", 60)
 font_small = pygame.font.SysFont("Verdana", 20)
-game_over = font.render("Eu vivo eu morro \n eu vivo de novo", True, BLACK)
+game_over = font.render("GAME OVER", True, BLACK)
 background = pygame.image.load("road.png")
 
 DISPLAYSURF = pygame.display.set_mode((565,600))
@@ -111,40 +111,50 @@ all_sprites.add(E2)
 INC_SPEED = pygame.USEREVENT + 1
 pygame.time.set_timer(INC_SPEED, 1000)
 
+def cenario():
+      DISPLAYSURF.blit(background, (0,0))
+      scores = font_small.render(str(SCORE), True, BLACK)
+      DISPLAYSURF.blit(scores, (10,10))
+
+      for entity in all_sprites:
+        DISPLAYSURF.blit(entity.image, entity.rect)
+        entity.move()
+
+def gameOver():
+      pygame.mixer.Sound('crash.wav').play()
+      max.image = pygame.image.load('explosion.png')
+      cenario()
+      DISPLAYSURF.blit(E1.image,E1.rect)
+      DISPLAYSURF.blit(max.image, max.rect)
+      pygame.display.update()
+      time.sleep(2)     
+      DISPLAYSURF.fill(RED)
+      DISPLAYSURF.blit(game_over, (30,250))
+      pygame.display.update()
+      time.sleep(2)
+      pygame.quit()
+      sys.exit()
+
+
 while True:
     for event in pygame.event.get():
-        if SCORE % 10 == 0:
-              SPEED += 0.5      
+        # if SCORE % 10 == 0:
+            #   SPEED += 1      
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
 
+    cenario()
+   
+    
 
-    DISPLAYSURF.blit(background, (0,0))
-    scores = font_small.render(str(SCORE), True, BLACK)
-    DISPLAYSURF.blit(scores, (10,10))
-
-    for entity in all_sprites:
-        DISPLAYSURF.blit(entity.image, entity.rect)
-        print(entity.rect)
-        entity.move()
-
-    # if pygame.sprite.spritecollideany(max, enemies):
-    if max.rect[1] in range(E1.rect[1], E1.rect[-1]) or max.rect[-1] in range(E1.rect[1], E1.rect[-1]):
-        pygame.mixer.Sound('crash.wav').play()
-        max.image = pygame.image.load('explosion.png')
-        DISPLAYSURF.blit(max.image, max.rect)
-        pygame.display.update()
-        time.sleep(2)     
-        DISPLAYSURF.fill(RED)
-        DISPLAYSURF.blit(game_over, (30,250))
-        pygame.display.update()
-        time.sleep(2)
-        pygame.quit()
-        sys.exit()
-
-          
-                  
+    if max.rect[1]-max.rect[-1] in range(E1.rect[1] - E1.rect[-1],E1.rect[1]) and (max.rect[0] in range(E1.rect[0],E1.rect[0]+E1.rect[2]) or max.rect[0]+max.rect[2] in range(E1.rect[0],E1.rect[0]+E1.rect[2])):
+      gameOver()
+    
+    if max.rect[1]-max.rect[-1] in range(E2.rect[1] - E2.rect[-1],E2.rect[1]) and (max.rect[0] in range(E2.rect[0],E2.rect[0]+E2.rect[2]) or max.rect[0]+max.rect[2] in range(E2.rect[0],E2.rect[0]+E2.rect[2])):
+      gameOver()
+    
+                            
     pygame.display.update()
     FramePerSec.tick(FPS)
 
