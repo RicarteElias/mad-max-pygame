@@ -26,6 +26,22 @@ pygame.mixer.music.load("background.wav")
 pygame.mixer.music.play()
 
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__() 
+        self.image = pygame.image.load("Player.png")
+        self.surf = pygame.Surface((40, 75))
+        self.rect = self.surf.get_rect(center = (160, 520))
+       
+    def move(self):
+        pressed_keys = pygame.key.get_pressed()
+        if self.rect.left > 0:
+              if pressed_keys[K_LEFT]:
+                  self.rect.move_ip(-5, 0)
+        if self.rect.right < SCREEN_WIDTH:        
+              if pressed_keys[K_RIGHT]:
+                  self.rect.move_ip(5, 0)
+
 
 class Tree(pygame.sprite.Sprite,):
       def __init__(self, obstacle):
@@ -59,50 +75,49 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.center = (random.randint(40, 400 - 40), 0)
 
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__() 
-        self.image = pygame.image.load("Player.png")
-        self.surf = pygame.Surface((40, 75))
-        self.rect = self.surf.get_rect(center = (160, 520))
-       
-    def move(self):
-        pressed_keys = pygame.key.get_pressed()
-        if self.rect.left > 0:
-              if pressed_keys[K_LEFT]:
-                  self.rect.move_ip(-5, 0)
-        if self.rect.right < SCREEN_WIDTH:        
-              if pressed_keys[K_RIGHT]:
-                  self.rect.move_ip(5, 0)
-                  
+class Enemy2(pygame.sprite.Sprite):
+      def __init__(self,obstacle):
+        super().__init__()
+        self.image = pygame.image.load(obstacle)
+        self.surf = pygame.Surface((42, 70))
+        self.rect = self.surf.get_rect(center = (random.randint(40,420-40)
+                                                 , 0))
 
-#Setting up Sprites        
+ 
+      def move(self):
+        global SCORE
+        self.rect.move_ip(0,SPEED + 1)
+        if (self.rect.top > 600):
+            SCORE += 1
+            self.rect.top = 0
+            self.rect.center = (random.randint(40, 400 - 40), 0)
+
+                
+
 max = Player()
 E1 = Enemy("Enemy.png")
-E2 = Tree("cacto_1.png")
+TREE1 = Tree("cacto_1.png")
+E2 = Enemy2("Enemy2.png")
 
-#Creating Sprites Groups
 enemies = pygame.sprite.Group()
 enemies.add(E1)
+enemies.add(E2)
 all_sprites = pygame.sprite.Group()
 all_sprites.add(max)
 all_sprites.add(E1)
+all_sprites.add(TREE1)
 all_sprites.add(E2)
 
-#Adding a new User event 
 INC_SPEED = pygame.USEREVENT + 1
 pygame.time.set_timer(INC_SPEED, 1000)
 
-#Game Loop
 while True:
-    #Cycles through all events occuring  
     for event in pygame.event.get():
-        if event.type == INC_SPEED:
+        if SCORE % 10 == 0:
               SPEED += 0.5      
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-
 
 
     DISPLAYSURF.blit(background, (0,0))
@@ -111,20 +126,22 @@ while True:
 
     for entity in all_sprites:
         DISPLAYSURF.blit(entity.image, entity.rect)
-        entity.move();
+        print(entity.rect)
+        entity.move()
 
-    if pygame.sprite.spritecollideany(max, enemies):
-          pygame.mixer.Sound('crash.wav').play()
-          DISPLAYSURF.blit(max.image,(150,-200))
-          time.sleep(2)     
-          DISPLAYSURF.fill(RED)
-          DISPLAYSURF.blit(game_over, (30,250))
-          pygame.display.update()
-          for entity in all_sprites:
-                entity.kill() 
-          time.sleep(2)
-          pygame.quit()
-          sys.exit()
+    # if pygame.sprite.spritecollideany(max, enemies):
+    if max.rect[1] in range(E1.rect[1], E1.rect[-1]) or max.rect[-1] in range(E1.rect[1], E1.rect[-1]):
+        pygame.mixer.Sound('crash.wav').play()
+        max.image = pygame.image.load('explosion.png')
+        DISPLAYSURF.blit(max.image, max.rect)
+        pygame.display.update()
+        time.sleep(2)     
+        DISPLAYSURF.fill(RED)
+        DISPLAYSURF.blit(game_over, (30,250))
+        pygame.display.update()
+        time.sleep(2)
+        pygame.quit()
+        sys.exit()
 
           
                   
