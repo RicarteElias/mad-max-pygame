@@ -2,15 +2,12 @@ import pygame, sys
 from pygame.locals import *
 import random, time
 
- 
 pygame.init()
 
 FPS = 60
 FramePerSec = pygame.time.Clock()
 FINALSCREEN = (220, 203, 181)
-RED   = (255, 0, 0)
 BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 600 
 SPEED = 1
@@ -83,19 +80,15 @@ class Enemy2(pygame.sprite.Sprite):
         self.surf = pygame.Surface((42, 70))
         self.rect = self.surf.get_rect(center = (random.randint(40,420-40)
                                                  , 0))
-
- 
       def move(self):
         global SCORE
         self.rect.move_ip(0,SPEED + 1)
         if (self.rect.top > 600):
             SCORE += 1
             self.rect.top = 0
-            self.rect.center = (random.randint(40, 400 - 40), 0)
+            self.rect.center = (random.randint(40, 400 - 40), 0)                
 
-                
-
-max = Player()
+MAX = Player()
 E1 = Enemy("Enemy.png")
 TREE1 = Tree("cacto_1.png")
 E2 = Enemy2("Enemy2.png")
@@ -104,7 +97,7 @@ enemies = pygame.sprite.Group()
 enemies.add(E1)
 enemies.add(E2)
 all_sprites = pygame.sprite.Group()
-all_sprites.add(max)
+all_sprites.add(MAX)
 all_sprites.add(E1)
 all_sprites.add(TREE1)
 all_sprites.add(E2)
@@ -123,10 +116,10 @@ def cenario():
 
 def gameOver():
       pygame.mixer.Sound('crash.wav').play()
-      max.image = pygame.image.load('explosion.png')
+      MAX.image = pygame.image.load('explosion.png')
       cenario()
       DISPLAYSURF.blit(E1.image,E1.rect)
-      DISPLAYSURF.blit(max.image, max.rect)
+      DISPLAYSURF.blit(MAX.image, MAX.rect)
       pygame.display.update()
       time.sleep(2)     
       DISPLAYSURF.fill(FINALSCREEN)
@@ -144,17 +137,13 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-
     cenario()
    
-    
-
-    if max.rect[1]-max.rect[-1] in range(E1.rect[1] - E1.rect[-1],E1.rect[1]) and (max.rect[0] in range(E1.rect[0],E1.rect[0]+E1.rect[2]) or max.rect[0]+max.rect[2] in range(E1.rect[0],E1.rect[0]+E1.rect[2])):
+    if MAX.rect[1]-MAX.rect[-1] in range(E1.rect[1] - E1.rect[-1],E1.rect[1]) and (MAX.rect[0] in range(E1.rect[0],E1.rect[0]+E1.rect[2]) or MAX.rect[0]+MAX.rect[2] in range(E1.rect[0],E1.rect[0]+E1.rect[2])):
       gameOver()
     
-    if max.rect[1]-max.rect[-1] in range(E2.rect[1] - E2.rect[-1],E2.rect[1]) and (max.rect[0] in range(E2.rect[0],E2.rect[0]+E2.rect[2]) or max.rect[0]+max.rect[2] in range(E2.rect[0],E2.rect[0]+E2.rect[2])):
-      gameOver()
-    
+    if MAX.rect[1]-MAX.rect[-1] in range(E2.rect[1] - E2.rect[-1],E2.rect[1]) and (MAX.rect[0] in range(E2.rect[0],E2.rect[0]+E2.rect[2]) or MAX.rect[0]+MAX.rect[2] in range(E2.rect[0],E2.rect[0]+E2.rect[2])):
+      gameOver() 
                             
     pygame.display.update()
     FramePerSec.tick(FPS)
